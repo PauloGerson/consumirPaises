@@ -1,74 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
-    <!-- Campo de entrada para o nome do usuário -->
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
+        android:id="@+id/linear_layout_bandeiras"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Digite seu nome"
-        app:boxStrokeColor="@android:color/holo_blue_dark">
+        android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_nome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Campo de entrada para o número aleatório -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Digite um número entre 5 e 100"
-        android:layout_marginTop="16dp"
-        app:boxStrokeColor="@android:color/holo_blue_dark">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_numero"
+        <!-- Campo de entrada para o nome do usuário -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:hint="Digite seu nome"
+            app:boxStrokeColor="@android:color/holo_blue_dark">
 
-    <!-- Botão para confirmar a entrada -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Confirmar"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_nome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Botão para mostrar o gabarito -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_gabarito"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Gabarito"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:visibility="gone" /> <!-- Inicialmente invisível -->
+        <!-- Campo de entrada para o número aleatório -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Digite um número entre 5 e 100"
+            android:layout_marginTop="16dp"
+            app:boxStrokeColor="@android:color/holo_blue_dark">
 
-    <!-- Exibe o resultado -->
-    <TextView
-        android:id="@+id/text_view_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:layout_marginTop="16dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_numero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Exibe a imagem da bandeira -->
-    <ImageView
-        android:id="@+id/image_view_bandeira"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="fitCenter" />
+        <!-- Botão para confirmar a entrada -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Confirmar"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
+        <!-- Botão para mostrar o gabarito -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_gabarito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Gabarito"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:visibility="gone" /> <!-- Inicialmente invisível -->
 
-</LinearLayout>
+        <!-- Exibe o resultado -->
+        <TextView
+            android:id="@+id/text_view_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="18sp"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

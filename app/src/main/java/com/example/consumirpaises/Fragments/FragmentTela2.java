@@ -1,6 +1,9 @@
 package com.example.consumirpaises.Fragments;
 
+
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -50,7 +53,6 @@ public class FragmentTela2 extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Inicializar as views
         editTextNome = view.findViewById(R.id.edit_text_nome);
         editTextNumero = view.findViewById(R.id.edit_text_numero);
         buttonConfirm = view.findViewById(R.id.button_confirm);
@@ -58,18 +60,15 @@ public class FragmentTela2 extends Fragment {
         textViewResult = view.findViewById(R.id.text_view_result);
         dbHelper = new DatabaseHelper(getContext());
 
-        // Configurar o botão de confirmação
         buttonConfirm.setOnClickListener(v -> {
             String nome = editTextNome.getText() != null ? editTextNome.getText().toString() : "";
             String numeroStr = editTextNumero.getText() != null ? editTextNumero.getText().toString() : "";
 
-            // Validação do nome
             if (nome.isEmpty()) {
                 Toast.makeText(getContext(), "Por favor, digite seu nome", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validação do número
             if (TextUtils.isEmpty(numeroStr)) {
                 Toast.makeText(getContext(), "Por favor, digite um número", Toast.LENGTH_SHORT).show();
                 return;
@@ -81,41 +80,54 @@ public class FragmentTela2 extends Fragment {
                 if (numero < 5 || numero > 100) {
                     Toast.makeText(getContext(), "O número deve estar entre 5 e 100", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Exibir o resultado
                     String resultado = "Olá " + nome + ", você escolheu o número: " + numero;
                     textViewResult.setText(resultado);
 
-                    // Tornar o botão "Gabarito" visível
+                    salvarNumeroEscolhidoNoBanco(numero);
                     buttonGabarito.setVisibility(View.VISIBLE);
-
-                    // Configurar o botão "Gabarito" para buscar e mostrar os países
-                    buttonGabarito.setOnClickListener(g -> {
-                        consumirApiDeBandeiras(() -> mostrarGabarito(numero));
-                    });
                 }
+
+                SharedPreferences prefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+                prefs.edit().putInt("numero_escolhido", numero).apply();
 
             } catch (NumberFormatException e) {
                 Toast.makeText(getContext(), "Por favor, insira um número válido", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Configura o OnClickListener do botão Gabarito
+        buttonGabarito.setOnClickListener(g -> {
+            // Obtém o número salvo em SharedPreferences (ou diretamente do banco, dependendo da sua escolha)
+            SharedPreferences prefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+            int numeroEscolhido = prefs.getInt("numero_escolhido", 0);
+
+            consumirApiDeBandeiras(() -> mostrarGabarito(numeroEscolhido));
+        });
+    }
+
+    private void salvarNumeroEscolhidoNoBanco(int numero) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_NUMERO_ESCOLHIDO, numero);
+        db.insertWithOnConflict(DatabaseHelper.TABLE_NUMERO, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     private void mostrarGabarito(int quantidade) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {
-                DatabaseHelper.COLUMN_NOME,  // Nome da coluna para nome
-                DatabaseHelper.COLUMN_BANDEIRA  // Nome da coluna para bandeira
+                DatabaseHelper.COLUMN_NOME,
+                DatabaseHelper.COLUMN_BANDEIRA
         };
 
         Cursor cursor = db.query(
-                DatabaseHelper.TABLE_PAIS,  // Nome da tabela
+                DatabaseHelper.TABLE_PAIS,
                 projection,
                 null,
                 null,
                 null,
                 null,
                 null,
-                String.valueOf(quantidade) // Limitar a quantidade de resultados
+                String.valueOf(quantidade)
         );
 
         StringBuilder resultado = new StringBuilder();
@@ -125,6 +137,7 @@ public class FragmentTela2 extends Fragment {
                 String linkBandeira = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_BANDEIRA));
                 resultado.append("País: ").append(nomePais).append("\n")
                         .append("Bandeira: ").append(linkBandeira).append("\n\n");
+
             } while (cursor.moveToNext());
         }
 
@@ -132,6 +145,7 @@ public class FragmentTela2 extends Fragment {
             cursor.close();
         }
 
+        // Atualiza o TextView com o resultado
         textViewResult.setText(resultado.toString());
     }
 
