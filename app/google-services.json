@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "303008361948",
+    "project_id": "paises-d2139",
+    "storage_bucket": "paises-d2139.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303008361948:android:3bf817b583d0c16aac3319",
+        "android_client_info": {
+          "package_name": "com.example.consumirpaises"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2dZ9Qzf7SDkSc_iC7rLOHz5yU1S11_EA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

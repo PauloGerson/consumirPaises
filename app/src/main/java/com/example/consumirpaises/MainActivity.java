@@ -17,6 +17,7 @@ import com.example.consumirpaises.Fragments.FragmentTela3;
 import com.example.consumirpaises.Fragments.FragmentTela4;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.Firebase;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.example.consumirpaises.R;
 import com.example.consumirpaises.banco.DatabaseHelper;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FragmentTela3 extends Fragment {
 
@@ -35,9 +35,7 @@ public class FragmentTela3 extends Fragment {
     private ArrayList<String> nomesList = new ArrayList<>();
     private ViewPager2 viewPager;
     private TextView textViewNomeBandeira;
-    private TextInputLayout inputLayout;
-    private TextInputEditText inputText;
-    private MaterialButton buttonConcluir;
+    private TextView textViewFim;
     private Handler handler;
     private Runnable runnable;
     private int currentPosition = 0;
@@ -45,7 +43,6 @@ public class FragmentTela3 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflar o layout do fragmento
         return inflater.inflate(R.layout.fragment_tela3, container, false);
     }
 
@@ -53,21 +50,15 @@ public class FragmentTela3 extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Inicializar DatabaseHelper
         dbHelper = new DatabaseHelper(getContext());
 
-        // Recuperar o número salvo no SharedPreferences
         SharedPreferences prefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
         int numero = prefs.getInt("numero_escolhido", 0);
 
-        // Configurar ViewPager2 e outras views
         viewPager = getView().findViewById(R.id.view_pager_bandeiras);
         textViewNomeBandeira = getView().findViewById(R.id.text_view_nome_bandeira);
-        inputLayout = getView().findViewById(R.id.input_layout);
-        inputText = getView().findViewById(R.id.input_text);
-        buttonConcluir = getView().findViewById(R.id.button_concluir);
+        textViewFim = getView().findViewById(R.id.text_view_fim);
 
-        // Exibir bandeiras com base no número recuperado
         carregarBandeiras(numero);
     }
 
@@ -96,11 +87,9 @@ public class FragmentTela3 extends Fragment {
             cursor.close();
         }
 
-        // Configurar o ViewPager2 com o Adapter
         BandeiraAdapter adapter = new BandeiraAdapter(bandeirasList, nomesList);
         viewPager.setAdapter(adapter);
 
-        // Configurar animação de transição
         viewPager.setPageTransformer((page, position) -> {
             page.setAlpha(0f);
             page.setVisibility(View.VISIBLE);
@@ -109,7 +98,7 @@ public class FragmentTela3 extends Fragment {
                     .setDuration(page.getResources().getInteger(android.R.integer.config_mediumAnimTime));
         });
 
-        // Iniciar o auto-scroll das bandeiras
+        // Dentro do método carregarBandeiras no FragmentTela3
         handler = new Handler(Looper.getMainLooper());
         runnable = new Runnable() {
             @Override
@@ -118,12 +107,17 @@ public class FragmentTela3 extends Fragment {
                     viewPager.setCurrentItem(currentPosition++, true);
                     handler.postDelayed(this, 3000); // Tempo entre as transições, 3 segundos
                 } else {
-                    // Se chegou à última bandeira, mostrar a mensagem "Hora do jogo"
                     viewPager.setVisibility(View.GONE);
-                    textViewNomeBandeira.setText("Hora do jogo!");
-                    textViewNomeBandeira.setVisibility(View.VISIBLE);
-                    inputLayout.setVisibility(View.VISIBLE);
-                    buttonConcluir.setVisibility(View.VISIBLE);
+                    textViewFim.setVisibility(View.VISIBLE); // Mostrar "Fim"
+                    textViewNomeBandeira.setVisibility(View.GONE);
+
+                    // Salvar a lista de bandeiras no SharedPreferences como String
+                    SharedPreferences prefs = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("nomes_bandeiras", String.join(",", nomesList)); // Converte a lista para uma única string
+                    editor.apply();
+
+                    Log.i("Fragment3", "Itens da lista salvos no SharedPreferences: " + nomesList);
                 }
             }
         };
@@ -133,10 +127,9 @@ public class FragmentTela3 extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable); // Parar o auto-scroll quando o fragmento não está visível
+        handler.removeCallbacks(runnable);
     }
 
-    // Adapter para o ViewPager2
     private class BandeiraAdapter extends RecyclerView.Adapter<BandeiraAdapter.ViewHolder> {
         private final ArrayList<String> bandeiras;
         private final ArrayList<String> nomes;
